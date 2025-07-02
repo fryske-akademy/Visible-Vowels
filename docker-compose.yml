@@ -1,0 +1,7 @@
+version: "3"
+services:
+  shiny:
+    image: visible-vowels
+    build: .
+    ports:
+      - "3838:3838"
