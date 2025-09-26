@@ -1,7 +1,15 @@
-version: "3"
+version: "3.7"
 services:
-  shiny:
-    image: visible-vowels
-    build: .
-    ports:
-      - "3838:3838"
+    visible-vowels:
+       image: "${APPNAME}:${VERSION}"
+       deploy:
+          replicas: 1
+          resources:
+             limits:
+                memory: "3GB"
+       ports:
+          - "10000:3838"
+       networks:
+          - ${APPNAME}
+networks:
+    visible-vowels:
