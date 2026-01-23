@@ -3522,6 +3522,38 @@ server <- function(input, output, session)
     return(scaleLab(input$replyScale1))
   }
 
+  scaleX <- function(scaleNormalLab)
+  {
+    if ((length(input$selManual)>0) && (input$selManual==TRUE))
+    {
+      if (!is.null(input$replyXmin) && !is.na(input$replyXmin) && !is.null(input$replyXmax) && !is.na(input$replyXmax))
+      {
+        if (input$replyXmin < input$replyXmax)
+          return(scale_x_continuous(name=paste0(input$axisX," (",scaleNormalLab,")"), position="bottom", limits = c(input$replyXmin, input$replyXmax)))
+        else
+          return(scale_x_reverse   (name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"   , limits = c(input$replyXmin, input$replyXmax)))
+      }
+    }
+     
+    return(scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"))
+  }
+  
+  scaleY <- function(scaleNormalLab)
+  {
+    if ((length(input$selManual)>0) && (input$selManual==TRUE))
+    {
+      if (!is.null(input$replyYmin) && !is.na(input$replyYmin) && !is.null(input$replyYmax) && !is.na(input$replyYmax))
+      {
+        if (input$replyYmin < input$replyYmax)
+          return(scale_y_continuous(name=paste0(input$axisY," (",scaleNormalLab,")"), position="left"  , limits = c(input$replyYmin, input$replyYmax)))
+        else
+          return(scale_y_reverse   (name=paste0(input$axisY," (",scaleNormalLab,")"), position="right" , limits = c(input$replyYmin, input$replyYmax)))
+      }
+    }
+
+    return(scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right"))
+  }
+
   plotGraph1 <- function()
   {
     if (is.null(vowelSub1()) || (nrow(vowelSub1())==0) | (length(replyTimes1())==0))
@@ -3584,17 +3616,6 @@ server <- function(input, output, session)
       else
         Basis <- Basis + labs(colour=paste(input$replyColor1, collapse = " "), shape=paste(input$replyShape1, collapse = " "))
 
-      if ((length(input$selManual)>0) && (input$selManual==TRUE))
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  , limits = c(input$replyXmax, input$replyXmin))
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right", limits = c(input$replyYmax, input$replyYmin))
-      }
-      else
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  )
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right")
-      }
-
       if (length(input$catPlot1)>0)
       {
         Title <- ggtitle(input$title1)
@@ -3617,7 +3638,7 @@ server <- function(input, output, session)
       else
         Legend <- theme(legend.position="none")
 
-      graphics::plot(Basis + scaleX + scaleY + Title + Facet +
+      graphics::plot(Basis + scaleX(scaleNormalLab) + scaleY(scaleNormalLab) + Title + Facet +
                      scale_color_manual(values=colPalette1(length(unique(vT$color)))) +
                      theme_bw() +
                      theme(text           =element_text(size=as.numeric(input$replyPoint1b), family=input$replyFont1b),
@@ -3760,17 +3781,6 @@ server <- function(input, output, session)
         Ellipse <- geom_blank()
       }
 
-      if ((length(input$selManual)>0) && (input$selManual==TRUE))
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  , limits = c(input$replyXmax, input$replyXmin))
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right", limits = c(input$replyYmax, input$replyYmin))
-      }
-      else
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  )
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right")
-      }
-
       if (length(input$catPlot1)>0)
       {
         Title <- ggtitle(input$title1)
@@ -3787,7 +3797,7 @@ server <- function(input, output, session)
         Legend <- theme(legend.position="none")
       }
 
-      graphics::plot(Basis + Points + Hull + Spokes + Ellipse + Centers + scaleX + scaleY + Title + Facet +
+      graphics::plot(Basis + Points + Hull + Spokes + Ellipse + Centers + scaleX(scaleNormalLab) + scaleY(scaleNormalLab) + Title + Facet +
                      scale_color_manual(values=colPalette1(length(unique(vT$color)))) + Fill +
                      labs(colour=paste(input$replyColor1, collapse = " "), fill=paste(input$replyColor1, collapse = " ")) +
                      theme_bw() +
@@ -3826,17 +3836,6 @@ server <- function(input, output, session)
 
       Basis <- ggplot(data=vT, aes(x=X, y=Y, colour=color, label=""))
 
-      if ((length(input$selManual)>0) && (input$selManual==TRUE))
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  , limits = c(input$replyXmax, input$replyXmin))
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right", limits = c(input$replyYmax, input$replyYmin))
-      }
-      else
-      {
-        scaleX <- scale_x_reverse(name=paste0(input$axisX," (",scaleNormalLab,")"), position="top"  )
-        scaleY <- scale_y_reverse(name=paste0(input$axisY," (",scaleNormalLab,")"), position="right")
-      }
-
       if (length(input$catPlot1)>0)
       {
         Title <- ggtitle(input$title1)
@@ -3858,7 +3857,7 @@ server <- function(input, output, session)
       else
         Legend <- theme(legend.position="none")
 
-      graphics::plot(Basis + scaleX + scaleY + Title + Facet +
+      graphics::plot(Basis + scaleX(scaleNormalLab) + scaleY(scaleNormalLab) + Title + Facet +
                      geom_path(aes(group = index), arrow = arrow(ends = "last", length = unit(0.1, "inches")), size=0.7) +
                      scale_color_manual(values=colPalette1(length(unique(vT$color)))) +
                      labs(colour=paste(input$replyColor1, collapse = " ")) +
