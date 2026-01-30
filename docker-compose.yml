@@ -1,15 +1,23 @@
 version: "3.7"
+
 services:
-    visible-vowels:
-       image: "${APPNAME}:${VERSION}"
-       deploy:
-          replicas: 1
-          resources:
-             limits:
-                memory: "3GB"
-       ports:
-          - "10000:3838"
-       networks:
-          - ${APPNAME}
+  visible-vowels:
+    image: "visible-vowels:latest"
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: "3G"
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3838 || exit 1"]
+    ports:
+       - "10000:3838"
+    networks:
+       - visible-vowels
+
 networks:
-    visible-vowels:
+  visible-vowels:
+    driver: overlay
+    attachable: true
